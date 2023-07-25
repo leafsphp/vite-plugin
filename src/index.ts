@@ -1,91 +1,22 @@
+import { DevServerUrl, LeafPlugin, PluginConfig, RefreshConfig } from './@types/index';
 import fs from 'fs'
 import { AddressInfo } from 'net'
 import os from 'os'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import colors from 'picocolors'
-import { Plugin, loadEnv, UserConfig, ConfigEnv, ResolvedConfig, SSROptions, PluginOption } from 'vite'
-import fullReload, { Config as FullReloadConfig } from 'vite-plugin-full-reload'
-
-interface PluginConfig {
-    /**
-     * The path or paths of the entry points to compile.
-     */
-    input: string|string[]
-
-    /**
-     * Laravel's public directory.
-     *
-     * @default 'public'
-     */
-    publicDirectory?: string
-
-    /**
-     * The public subdirectory where compiled assets should be written.
-     *
-     * @default 'build'
-     */
-    buildDirectory?: string
-
-    /**
-     * The path to the "hot" file.
-     *
-     * @default `${publicDirectory}/hot`
-     */
-    hotFile?: string
-
-    /**
-     * The path of the SSR entry point.
-     */
-    ssr?: string|string[]
-
-    /**
-     * The directory where the SSR bundle should be written.
-     *
-     * @default 'bootstrap/ssr'
-     */
-    ssrOutputDirectory?: string
-
-    /**
-     * Configuration for performing full page refresh on blade (or other) file changes.
-     *
-     * {@link https://github.com/ElMassimo/vite-plugin-full-reload}
-     * @default false
-     */
-    refresh?: boolean|string|string[]|RefreshConfig|RefreshConfig[]
-
-    /**
-     * Utilise the valet TLS certificates.
-     *
-     * @default false
-     */
-    valetTls?: string|boolean,
-
-    /**
-     * Transform the code while serving.
-     */
-    transformOnServe?: (code: string, url: DevServerUrl) => string,
-}
-
-interface RefreshConfig {
-    paths: string[],
-    config?: FullReloadConfig,
-}
-
-interface LaravelPlugin extends Plugin {
-    config: (config: UserConfig, env: ConfigEnv) => UserConfig
-}
-
-type DevServerUrl = `${'http'|'https'}://${string}:${number}`
+import { Plugin, loadEnv, UserConfig, ResolvedConfig, SSROptions, PluginOption } from 'vite'
+import fullReload from 'vite-plugin-full-reload'
 
 let exitHandlersBound = false
 
 export const refreshPaths = [
-    'app/View/Components/**',
-    'resources/views/**',
-    'resources/lang/**',
-    'lang/**',
-    'routes/**',
+    'app/views/**',
+    'views/**',
+    'pages/**',
+    'js/**',
+    'css/**',
+    'app/routes/**',
 ]
 
 /**
@@ -93,11 +24,11 @@ export const refreshPaths = [
  *
  * @param config - A config object or relative path(s) of the scripts to be compiled.
  */
-export default function laravel(config: string|string[]|PluginConfig): [LaravelPlugin, ...Plugin[]]  {
+export default function laravel(config: string|string[]|PluginConfig): [LeafPlugin, ...Plugin[]]  {
     const pluginConfig = resolvePluginConfig(config)
 
     return [
-        resolveLaravelPlugin(pluginConfig),
+        resolveLeafPlugin(pluginConfig),
         ...resolveFullReloadConfig(pluginConfig) as Plugin[],
     ];
 }
@@ -105,16 +36,16 @@ export default function laravel(config: string|string[]|PluginConfig): [LaravelP
 /**
  * Resolve the Laravel Plugin configuration.
  */
-function resolveLaravelPlugin(pluginConfig: Required<PluginConfig>): LaravelPlugin {
+function resolveLeafPlugin(pluginConfig: Required<PluginConfig>): LeafPlugin {
     let viteDevServerUrl: DevServerUrl
     let resolvedConfig: ResolvedConfig
 
     const defaultAliases: Record<string, string> = {
-        '@': '/resources/js',
+        '@': '/app/views/js',
     };
 
     return {
-        name: 'laravel',
+        name: 'leaf',
         enforce: 'post',
         config: (userConfig, { command, mode }) => {
             const ssr = !! userConfig.build?.ssr

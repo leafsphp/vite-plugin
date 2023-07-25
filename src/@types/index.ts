@@ -1,0 +1,73 @@
+import { ConfigEnv, UserConfig, Plugin } from "vite";
+import { Config as FullReloadConfig } from "vite-plugin-full-reload";
+
+export interface PluginConfig {
+    /**
+     * The path or paths of the entry points to compile.
+     */
+    input: string | string[];
+
+    /**
+     * Laravel's public directory.
+     *
+     * @default 'public'
+     */
+    publicDirectory?: string;
+
+    /**
+     * The public subdirectory where compiled assets should be written.
+     *
+     * @default 'build'
+     */
+    buildDirectory?: string;
+
+    /**
+     * The path to the "hot" file.
+     *
+     * @default `${publicDirectory}/hot`
+     */
+    hotFile?: string;
+
+    /**
+     * The path of the SSR entry point.
+     */
+    ssr?: string | string[];
+
+    /**
+     * The directory where the SSR bundle should be written.
+     *
+     * @default 'bootstrap/ssr'
+     */
+    ssrOutputDirectory?: string;
+
+    /**
+     * Configuration for performing full page refresh on blade (or other) file changes.
+     *
+     * {@link https://github.com/ElMassimo/vite-plugin-full-reload}
+     * @default false
+     */
+    refresh?: boolean | string | string[] | RefreshConfig | RefreshConfig[];
+
+    /**
+     * Utilise the valet TLS certificates.
+     *
+     * @default false
+     */
+    valetTls?: string | boolean;
+
+    /**
+     * Transform the code while serving.
+     */
+    transformOnServe?: (code: string, url: DevServerUrl) => string;
+}
+
+export interface RefreshConfig {
+    paths: string[];
+    config?: FullReloadConfig;
+}
+
+export interface LeafPlugin extends Plugin {
+    config: (config: UserConfig, env: ConfigEnv) => UserConfig;
+}
+
+export type DevServerUrl = `${"http" | "https"}://${string}:${number}`;
