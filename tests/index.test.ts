@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import laravel from '../src'
+import leaf from '../src'
 import { resolvePageComponent } from '../src/inertia-helpers';
 
-describe('laravel-vite-plugin', () => {
+describe('leaf-vite-plugin', () => {
     afterEach(() => {
         vi.clearAllMocks()
     })
@@ -10,17 +10,17 @@ describe('laravel-vite-plugin', () => {
     it('handles missing configuration', () => {
         /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
         /* @ts-ignore */
-        expect(() => laravel())
-            .toThrowError('laravel-vite-plugin: missing configuration.');
+        expect(() => leaf())
+            .toThrowError('leaf-vite-plugin: missing configuration.');
 
         /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
         /* @ts-ignore */
-        expect(() => laravel({}))
-            .toThrowError('laravel-vite-plugin: missing configuration for "input".');
+        expect(() => leaf({}))
+            .toThrowError('leaf-vite-plugin: missing configuration for "input".');
     })
 
     it('accepts a single input', () => {
-        const plugin = laravel('app/views/js/app.ts')[0]
+        const plugin = leaf('app/views/js/app.ts')[0]
 
         const config = plugin.config({}, { command: 'build', mode: 'production' })
         expect(config.build.rollupOptions.input).toBe('app/views/js/app.ts')
@@ -30,7 +30,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('accepts an array of inputs', () => {
-        const plugin = laravel([
+        const plugin = leaf([
             'app/views/js/app.ts',
             'app/views/js/other.js',
         ])[0]
@@ -43,7 +43,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('accepts a full configuration', () => {
-        const plugin = laravel({
+        const plugin = leaf({
             input: 'app/views/js/app.ts',
             publicDirectory: 'other-public',
             buildDirectory: 'other-build',
@@ -65,7 +65,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('respects users base config option', () => {
-        const plugin = laravel({
+        const plugin = leaf({
             input: 'app/views/js/app.ts',
         })[0]
 
@@ -77,7 +77,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('accepts a partial configuration', () => {
-        const plugin = laravel({
+        const plugin = leaf({
             input: 'app/views/js/app.js',
             ssr: 'app/views/js/ssr.js',
         })[0]
@@ -97,7 +97,7 @@ describe('laravel-vite-plugin', () => {
 
     it('uses the default entry point when ssr entry point is not provided', () => {
         // This is support users who may want a dedicated Vite config for SSR.
-        const plugin = laravel('app/views/js/ssr.js')[0]
+        const plugin = leaf('app/views/js/ssr.js')[0]
 
         const ssrConfig = plugin.config({ build: { ssr: true } }, { command: 'build', mode: 'production' })
         expect(ssrConfig.build.rollupOptions.input).toBe('app/views/js/ssr.js')
@@ -105,7 +105,7 @@ describe('laravel-vite-plugin', () => {
 
     it('prefixes the base with ASSET_URL in production mode', () => {
         process.env.ASSET_URL = 'http://example.com'
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const devConfig = plugin.config({}, { command: 'serve', mode: 'development' })
         expect(devConfig.base).toBe('')
@@ -117,17 +117,17 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('prevents setting an empty publicDirectory', () => {
-        expect(() => laravel({ input: 'app/views/js/app.js', publicDirectory: '' })[0])
+        expect(() => leaf({ input: 'app/views/js/app.js', publicDirectory: '' })[0])
             .toThrowError('publicDirectory must be a subdirectory');
     })
 
     it('prevents setting an empty buildDirectory', () => {
-        expect(() => laravel({ input: 'app/views/js/app.js', buildDirectory: '' })[0])
+        expect(() => leaf({ input: 'app/views/js/app.js', buildDirectory: '' })[0])
             .toThrowError('buildDirectory must be a subdirectory');
     })
 
     it('handles surrounding slashes on directories', () => {
-        const plugin = laravel({
+        const plugin = leaf({
             input: 'app/views/js/app.js',
             publicDirectory: '/public/test/',
             buildDirectory: '/build/test/',
@@ -143,7 +143,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('provides an @ alias by default', () => {
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const config = plugin.config({}, { command: 'build', mode: 'development' })
 
@@ -151,7 +151,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('respects a users existing @ alias', () => {
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const config = plugin.config({
             resolve: {
@@ -165,7 +165,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('appends an Alias object when using an alias array', () => {
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const config = plugin.config({
             resolve: {
@@ -183,7 +183,7 @@ describe('laravel-vite-plugin', () => {
 
     it('configures the Vite server when inside a Sail container', () => {
         process.env.LARAVEL_SAIL = '1'
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const config = plugin.config({}, { command: 'serve', mode: 'development' })
         expect(config.server.host).toBe('0.0.0.0')
@@ -196,7 +196,7 @@ describe('laravel-vite-plugin', () => {
     it('allows the Vite port to be configured when inside a Sail container', () => {
         process.env.LARAVEL_SAIL = '1'
         process.env.VITE_PORT = '1234'
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const config = plugin.config({}, { command: 'serve', mode: 'development' })
         expect(config.server.host).toBe('0.0.0.0')
@@ -209,7 +209,7 @@ describe('laravel-vite-plugin', () => {
 
     it('allows the server configuration to be overridden inside a Sail container', () => {
         process.env.LARAVEL_SAIL = '1'
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const config = plugin.config({
             server: {
@@ -227,11 +227,11 @@ describe('laravel-vite-plugin', () => {
 
     it('prevents the Inertia helpers from being externalized', () => {
         /* eslint-disable @typescript-eslint/ban-ts-comment */
-        const plugin = laravel('app/views/js/app.js')[0]
+        const plugin = leaf('app/views/js/app.js')[0]
 
         const noSsrConfig = plugin.config({ build: { ssr: true } }, { command: 'build', mode: 'production' })
         /* @ts-ignore */
-        expect(noSsrConfig.ssr.noExternal).toEqual(['laravel-vite-plugin'])
+        expect(noSsrConfig.ssr.noExternal).toEqual(['leaf-vite-plugin'])
 
         /* @ts-ignore */
         const nothingExternalConfig = plugin.config({ ssr: { noExternal: true }, build: { ssr: true } }, { command: 'build', mode: 'production' })
@@ -241,22 +241,22 @@ describe('laravel-vite-plugin', () => {
         /* @ts-ignore */
         const arrayNoExternalConfig = plugin.config({ ssr: { noExternal: ['foo'] }, build: { ssr: true } }, { command: 'build', mode: 'production' })
         /* @ts-ignore */
-        expect(arrayNoExternalConfig.ssr.noExternal).toEqual(['foo', 'laravel-vite-plugin'])
+        expect(arrayNoExternalConfig.ssr.noExternal).toEqual(['foo', 'leaf-vite-plugin'])
 
         /* @ts-ignore */
         const stringNoExternalConfig = plugin.config({ ssr: { noExternal: 'foo' }, build: { ssr: true } }, { command: 'build', mode: 'production' })
         /* @ts-ignore */
-        expect(stringNoExternalConfig.ssr.noExternal).toEqual(['foo', 'laravel-vite-plugin'])
+        expect(stringNoExternalConfig.ssr.noExternal).toEqual(['foo', 'leaf-vite-plugin'])
     })
 
     it('does not configure full reload when configuration it not an object', () => {
-        const plugins = laravel('app/views/js/app.js')
+        const plugins = leaf('app/views/js/app.js')
 
         expect(plugins.length).toBe(1)
     })
 
     it('does not configure full reload when refresh is not present', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
         })
 
@@ -264,7 +264,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('does not configure full reload when refresh is set to undefined', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
             refresh: undefined,
         })
@@ -272,7 +272,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('does not configure full reload when refresh is false', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
             refresh: false,
         })
@@ -281,7 +281,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('configures full reload with routes and views when refresh is true', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
             refresh: true,
         })
@@ -294,7 +294,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('configures full reload when refresh is a single path', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
             refresh: 'path/to/watch/**',
         })
@@ -307,7 +307,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('configures full reload when refresh is an array of paths', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
             refresh: ['path/to/watch/**', 'another/to/watch/**'],
         })
@@ -320,7 +320,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('configures full reload when refresh is a complete configuration to proxy', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
             refresh: {
                 paths: ['path/to/watch/**', 'another/to/watch/**'],
@@ -337,7 +337,7 @@ describe('laravel-vite-plugin', () => {
     })
 
     it('configures full reload when refresh is an array of complete configurations to proxy', () => {
-        const plugins = laravel({
+        const plugins = leaf({
             input: 'app/views/js/app.js',
             refresh: [
                 {

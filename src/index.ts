@@ -20,11 +20,11 @@ export const refreshPaths = [
 ]
 
 /**
- * Laravel plugin for Vite.
+ * Leaf plugin for Vite.
  *
  * @param config - A config object or relative path(s) of the scripts to be compiled.
  */
-export default function laravel(config: string|string[]|PluginConfig): [LeafPlugin, ...Plugin[]]  {
+export default function leaf(config: string|string[]|PluginConfig): [LeafPlugin, ...Plugin[]]  {
     const pluginConfig = resolvePluginConfig(config)
 
     return [
@@ -34,7 +34,7 @@ export default function laravel(config: string|string[]|PluginConfig): [LeafPlug
 }
 
 /**
- * Resolve the Laravel Plugin configuration.
+ * Resolve the Leaf Plugin configuration.
  */
 function resolveLeafPlugin(pluginConfig: Required<PluginConfig>): LeafPlugin {
     let viteDevServerUrl: DevServerUrl
@@ -69,7 +69,7 @@ function resolveLeafPlugin(pluginConfig: Required<PluginConfig>): LeafPlugin {
                     assetsInlineLimit: userConfig.build?.assetsInlineLimit ?? 0,
                 },
                 server: {
-                    origin: userConfig.server?.origin ?? '__laravel_vite_placeholder__',
+                    origin: userConfig.server?.origin ?? '__leaf_vite_placeholder__',
                     ...(process.env.LARAVEL_SAIL ? {
                         host: userConfig.server?.host ?? '0.0.0.0',
                         port: userConfig.server?.port ?? (env.VITE_PORT ? parseInt(env.VITE_PORT) : 5173),
@@ -111,7 +111,7 @@ function resolveLeafPlugin(pluginConfig: Required<PluginConfig>): LeafPlugin {
         },
         transform(code) {
             if (resolvedConfig.command === 'serve') {
-                code = code.replace(/__laravel_vite_placeholder__/g, viteDevServerUrl)
+                code = code.replace(/__leaf_vite_placeholder__/g, viteDevServerUrl)
 
                 return pluginConfig.transformOnServe(code, viteDevServerUrl)
             }
@@ -129,7 +129,7 @@ function resolveLeafPlugin(pluginConfig: Required<PluginConfig>): LeafPlugin {
                     fs.writeFileSync(pluginConfig.hotFile, viteDevServerUrl)
 
                     setTimeout(() => {
-                        server.config.logger.info(`\n  ${colors.red(`${colors.bold('LARAVEL')} ${laravelVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
+                        server.config.logger.info(`\n  ${colors.green(`${colors.bold('LEAF')} ${leafVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
                         server.config.logger.info('')
                         server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('APP_URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
                     }, 100)
@@ -194,11 +194,11 @@ function ensureCommandShouldRunInEnvironment(command: 'build'|'serve', env: Reco
 /**
  * The version of Laravel being run.
  */
-function laravelVersion(): string {
+function leafVersion(): string {
     try {
         const composer = JSON.parse(fs.readFileSync('composer.lock').toString())
 
-        return composer.packages?.find((composerPackage: {name: string}) => composerPackage.name === 'laravel/framework')?.version ?? ''
+        return composer.packages?.find((composerPackage: {name: string}) => composerPackage.name === 'leafs/leaf')?.version ?? ''
     } catch {
         return ''
     }
@@ -220,7 +220,7 @@ function pluginVersion(): string {
  */
 function resolvePluginConfig(config: string|string[]|PluginConfig): Required<PluginConfig> {
     if (typeof config === 'undefined') {
-        throw new Error('laravel-vite-plugin: missing configuration.')
+        throw new Error('leaf-vite-plugin: missing configuration.')
     }
 
     if (typeof config === 'string' || Array.isArray(config)) {
@@ -228,14 +228,14 @@ function resolvePluginConfig(config: string|string[]|PluginConfig): Required<Plu
     }
 
     if (typeof config.input === 'undefined') {
-        throw new Error('laravel-vite-plugin: missing configuration for "input".')
+        throw new Error('leaf-vite-plugin: missing configuration for "input".')
     }
 
     if (typeof config.publicDirectory === 'string') {
         config.publicDirectory = config.publicDirectory.trim().replace(/^\/+/, '')
 
         if (config.publicDirectory === '') {
-            throw new Error('laravel-vite-plugin: publicDirectory must be a subdirectory. E.g. \'public\'.')
+            throw new Error('leaf-vite-plugin: publicDirectory must be a subdirectory. E.g. \'public\'.')
         }
     }
 
@@ -243,7 +243,7 @@ function resolvePluginConfig(config: string|string[]|PluginConfig): Required<Plu
         config.buildDirectory = config.buildDirectory.trim().replace(/^\/+/, '').replace(/\/+$/, '')
 
         if (config.buildDirectory === '') {
-            throw new Error('laravel-vite-plugin: buildDirectory must be a subdirectory. E.g. \'build\'.')
+            throw new Error('leaf-vite-plugin: buildDirectory must be a subdirectory. E.g. \'build\'.')
         }
     }
 
@@ -363,7 +363,7 @@ function noExternalInertiaHelpers(config: UserConfig): true|Array<string|RegExp>
     /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
     /* @ts-ignore */
     const userNoExternal = (config.ssr as SSROptions|undefined)?.noExternal
-    const pluginNoExternal = ['laravel-vite-plugin']
+    const pluginNoExternal = ['leaf-vite-plugin']
 
     if (userNoExternal === true) {
         return true
