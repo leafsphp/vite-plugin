@@ -13,7 +13,7 @@
         "url": "https://github.com/leafsphp/vite-plugin"
     },
     "license": "MIT",
-    "author": "Laravel",
+    "author": "Michael Darko-Duodu <mychi@leafphp.dev>",
     "exports": {
         ".": {
             "import": "./dist/index.mjs",
@@ -60,5 +60,9 @@
     "dependencies": {
         "picocolors": "^1.0.0",
         "vite-plugin-full-reload": "^1.0.5"
+    },
+    "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/leaf"
     }
 }
