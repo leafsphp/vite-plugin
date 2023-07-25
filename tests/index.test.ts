@@ -288,7 +288,7 @@ describe('leaf-vite-plugin', () => {
 
         expect(plugins.length).toBe(2)
         /** @ts-ignore */
-        expect(plugins[1].__laravel_plugin_config).toEqual({
+        expect(plugins[1].__leaf_plugin_config).toEqual({
             paths: ['app/views/**', 'views/**', 'pages/**', 'js/**', 'css/**', 'app/routes/**'],
         })
     })
@@ -301,7 +301,7 @@ describe('leaf-vite-plugin', () => {
 
         expect(plugins.length).toBe(2)
         /** @ts-ignore */
-        expect(plugins[1].__laravel_plugin_config).toEqual({
+        expect(plugins[1].__leaf_plugin_config).toEqual({
             paths: ['path/to/watch/**'],
         })
     })
@@ -314,7 +314,7 @@ describe('leaf-vite-plugin', () => {
 
         expect(plugins.length).toBe(2)
         /** @ts-ignore */
-        expect(plugins[1].__laravel_plugin_config).toEqual({
+        expect(plugins[1].__leaf_plugin_config).toEqual({
             paths: ['path/to/watch/**', 'another/to/watch/**'],
         })
     })
@@ -330,7 +330,7 @@ describe('leaf-vite-plugin', () => {
 
         expect(plugins.length).toBe(2)
         /** @ts-ignore */
-        expect(plugins[1].__laravel_plugin_config).toEqual({
+        expect(plugins[1].__leaf_plugin_config).toEqual({
             paths: ['path/to/watch/**', 'another/to/watch/**'],
             config: { delay: 987 }
         })
@@ -353,12 +353,12 @@ describe('leaf-vite-plugin', () => {
 
         expect(plugins.length).toBe(3)
         /** @ts-ignore */
-        expect(plugins[1].__laravel_plugin_config).toEqual({
+        expect(plugins[1].__leaf_plugin_config).toEqual({
             paths: ['path/to/watch/**'],
             config: { delay: 987 }
         })
         /** @ts-ignore */
-        expect(plugins[2].__laravel_plugin_config).toEqual({
+        expect(plugins[2].__leaf_plugin_config).toEqual({
             paths: ['another/to/watch/**'],
             config: { delay: 123 }
         })

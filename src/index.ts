@@ -192,7 +192,7 @@ function ensureCommandShouldRunInEnvironment(command: 'build'|'serve', env: Reco
 }
 
 /**
- * The version of Laravel being run.
+ * The version of Leaf being run.
  */
 function leafVersion(): string {
     try {
@@ -205,7 +205,7 @@ function leafVersion(): string {
 }
 
 /**
- * The version of the Laravel Vite plugin being run.
+ * The version of the Leaf Vite plugin being run.
  */
 function pluginVersion(): string {
     try {
@@ -319,7 +319,7 @@ function resolveFullReloadConfig({ refresh: config }: Required<PluginConfig>): P
 
         /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
         /** @ts-ignore */
-        plugin.__laravel_plugin_config = c
+        plugin.__leaf_plugin_config = c
 
         return plugin
     })
