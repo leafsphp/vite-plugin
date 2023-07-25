@@ -1,6 +1,6 @@
 {
     "name": "@leafphp/vite-plugin",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "description": "Leaf plugin for Vite.",
     "keywords": [
         "leafphp",
@@ -39,7 +39,8 @@
         "build-plugin-esm": "esbuild src/index.ts --platform=node --format=esm --outfile=dist/index.mjs",
         "build-inertia-helpers": "rm -rf inertia-helpers && tsc --project tsconfig.inertia-helpers.json",
         "lint": "eslint --ext .ts ./src ./tests",
-        "test": "vitest run"
+        "test": "vitest run",
+        "release": "rm -rf node_modules package-lock.json && npm install && npm run build && npm publish"
     },
     "devDependencies": {
         "@types/node": "^18.11.9",
