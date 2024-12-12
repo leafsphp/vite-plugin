@@ -1,5 +1,5 @@
-import { ConfigEnv, UserConfig, Plugin } from "vite";
-import { Config as FullReloadConfig } from "vite-plugin-full-reload";
+import { ConfigEnv, UserConfig, Plugin } from 'vite';
+import { Config as FullReloadConfig } from 'vite-plugin-full-reload';
 
 export interface PluginConfig {
     /**
@@ -8,7 +8,7 @@ export interface PluginConfig {
     input: string | string[];
 
     /**
-     * Laravel's public directory.
+     * Leaf MVC's public directory.
      *
      * @default 'public'
      */
@@ -49,11 +49,18 @@ export interface PluginConfig {
     refresh?: boolean | string | string[] | RefreshConfig | RefreshConfig[];
 
     /**
+     * Utilise the Herd or Valet TLS certificates.
+     *
+     * @default null
+     */
+    detectTls?: string | boolean | null;
+
+    /**
      * Utilise the valet TLS certificates.
      *
      * @default false
      */
-    valetTls?: string | boolean;
+    valetTls?: string | boolean | null;
 
     /**
      * Transform the code while serving.
@@ -70,4 +77,4 @@ export interface LeafPlugin extends Plugin {
     config: (config: UserConfig, env: ConfigEnv) => UserConfig;
 }
 
-export type DevServerUrl = `${"http" | "https"}://${string}:${number}`;
+export type DevServerUrl = `${'http' | 'https'}://${string}:${number}`;

@@ -3,7 +3,5 @@
     "compilerOptions": {
         "outDir": "inertia-helpers"
     },
-    "include": [
-        "./src/inertia-helpers/index.ts"
-    ]
+    "include": ["./src/inertia-helpers/index.ts"]
 }
